@@ -6,7 +6,7 @@
 
 ## To-Do List
 
-- [] Avatar put into camera.
+- [ ] Avatar put into camera.
 
 ##  Vision
 
