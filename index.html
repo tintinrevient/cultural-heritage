@@ -1,0 +1,101 @@
+<html>
+<head>
+	<title>objmtl</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto|Sansita:700&display=swap" rel="stylesheet">
+</head>
+<body>
+	<script type="module">
+
+		import * as THREE from '../lib/three.module.js';
+		import { DDSLoader } from '../lib/DDSLoader.js';
+		import { MTLLoader } from '../lib/MTLLoader.js';
+		import { OBJLoader } from '../lib/OBJLoader.js';
+
+		var renderer, scene, camera;
+		var stats;
+
+		var mouseX = 0, mouseY = 0;
+		var windowHalfX = window.innerWidth / 2;
+		var windowHalfY = window.innerHeight / 2;
+
+		init();
+		animate();
+
+		function init() {
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+			camera.position.z = 250;
+
+			var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+			scene.add(ambientLight);
+
+			var pointLight = new THREE.PointLight(0xffffff, 0.8);
+			camera.add(pointLight);
+			scene.add(camera);
+
+			var onProgress = function(xhr) {
+
+				if(xhr.lengthComputable) {
+					var percentComplete = xhr.loaded / xhr.total * 100;
+					console.log(Math.round(percentComplete, 2) + '% downloaded');
+				}
+			}
+
+			var onError = function() {};
+
+			var manager = new THREE.LoadingManager();
+			manager.addHandler( /\.dds$/i, new DDSLoader());
+
+			new MTLLoader(manager).setPath('../models/obj/male02/').load('male02_dds.mtl', function(materials) {
+
+				materials.preload();
+
+				new OBJLoader(manager).setMaterials(materials).setPath('../models/obj/male02/').load('male02.obj', function(object) {
+					object.position.y = - 95;
+					scene.add(object);
+				}, onProgress, onError);
+
+			});
+			
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+		}
+
+		function onDocumentMouseMove(event) {
+
+			mouseX = (event.clientX - windowHalfX) / 2;
+			mouseY = (event.clientY - windowHalfY) / 2;
+
+		}
+
+		function animate() {
+
+			requestAnimationFrame(animate);
+
+			render();
+
+		}
+
+		function render() {
+
+			camera.position.x += (mouseX - camera.position.x) * .05;
+			camera.position.y += (- mouseY - camera.position.y) * .05;
+
+			camera.lookAt(scene.position);
+
+			renderer.render(scene, camera);
+		}
+
+	</script>
+</body>
+</html>

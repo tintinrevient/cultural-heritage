@@ -1,0 +1,23 @@
+root {
+	box-sizing: border-box;
+}
+
+*, *::before, *::after {
+	box-sizing: inherit;
+}
+
+body {
+	font-family: 'Sansita' sans-serif;
+}
+
+h1 {
+	font-family: 'Sansita' sans-serif;
+}
+
+#container {
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+	background-color: black;
+}
