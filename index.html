@@ -123,9 +123,9 @@
 				// If we have not added boxes yet, and we have positional
 				// information applied to our camera (it can take a few seconds),
 				// and the camera's Y position is not undefined or 0, create boxes
-				// if (!objectsAdded && !camera.position.y) {
-				// 	addObjects();
-				// }
+				if (!objectsAdded && !camera.position.y) {
+					addObjects();
+				}
 
 				// Render our three.js virtual scene
 				renderer.clearDepth();
@@ -207,18 +207,9 @@
 
 			function addObjects() {
 
-				var quantity = 6
+				var quantity = 3
 
 				var angle = Math.PI * 2 * (1 / quantity);
-				var geometry = new THREE.TorusGeometry(1, 0.4, 16, 60);
-				var material = new THREE.MeshBasicMaterial({
-					wireframe: true
-				});
-				var torus = new THREE.Mesh(geometry, material);
-				torus.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 0.75, Math.sin(angle) * OBJECT_DISTANCE);
-				scene.add(torus);
-
-				var angle = Math.PI * 2 * (2 / quantity);
 				var geometry = new THREE.CubeGeometry(2, 2, 2);
 				var material = new THREE.MeshBasicMaterial({
 					wireframe: true
@@ -227,7 +218,7 @@
 				cube.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y + 0.25, Math.sin(angle) * OBJECT_DISTANCE);
 				scene.add(cube);
 
-				var angle = Math.PI * 2 * (3 / quantity);
+				var angle = Math.PI * 2 * (2 / quantity);
 				var geometry = new THREE.CylinderGeometry(1, 1, 3, 8);
 				var material = new THREE.MeshBasicMaterial({
 					wireframe: true
@@ -236,7 +227,7 @@
 				cylinder.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 2, Math.sin(angle) * OBJECT_DISTANCE);
 				scene.add(cylinder);
 
-				var angle = Math.PI * 2 * (4 / quantity);
+				var angle = Math.PI * 2 * (3 / quantity);
 				var geometry = new THREE.ConeGeometry(1, 3, 16);
 				var material = new THREE.MeshBasicMaterial({
 					wireframe: true
@@ -244,25 +235,6 @@
 				var cone = new THREE.Mesh(geometry, material);
 				cone.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 1.5, Math.sin(angle) * OBJECT_DISTANCE);
 				scene.add(cone);
-
-				var angle = Math.PI * 2 * (5 / quantity);
-				var geometry = new THREE.SphereGeometry(1, 16, 16);
-				var material = new THREE.MeshBasicMaterial({
-					wireframe: true
-				});
-				var sphere = new THREE.Mesh(geometry, material);
-				sphere.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 0.75, Math.sin(angle) * OBJECT_DISTANCE);
-				scene.add(sphere);
-
-				var angle = Math.PI * 2 * (6 / quantity);
-				var geometry = new THREE.DodecahedronGeometry(2, 1)
-				var material = new THREE.MeshBasicMaterial({
-					wireframe: true
-				});
-				var dodecahedron = new THREE.Mesh(geometry, material);
-				dodecahedron.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y + 1, Math.sin(angle) * OBJECT_DISTANCE);
-				scene.add(dodecahedron);
-
 
 				// Flip this switch so that we only perform this once
 				objectsAdded = true;
