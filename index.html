@@ -11,10 +11,19 @@
 		<script src="lib/VRControls.js"></script>
 		<script src="lib/three.ar.js"></script>
 		<script>
-			var vrDisplay, vrControls, arView;
+			var vrDisplay, vrControls, vrFrameData, arView;
 
 			var OBJECT_DISTANCE = 5;
 			var objectsAdded = false;
+
+			var canvas;
+			var camera;
+			var scene;
+			var renderer;
+			var cone;
+			var cones = [];
+
+			var anchorManager;
 
 			/**
 			 * Use the `getARDisplay()` utility to leverage the WebVR API
@@ -24,6 +33,7 @@
 			 */
 			THREE.ARUtils.getARDisplay().then(function (display) {
 				if (display) {
+					vrFrameData = new VRFrameData();
 					vrDisplay = display;
 					init();
 				} else {
@@ -71,9 +81,17 @@
 				// real world and virtual world in sync.
 				vrControls = new THREE.VRControls(camera);
 
+				var geometry = new THREE.ConeGeometry(0.05, 0.1, 16);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				cone = new THREE.Mesh(geometry, material);
+
 				// Bind our event handlers
 				window.addEventListener('resize', onWindowResize, false);
-				// sphere.rotation.y += 0.005;
+				window.addEventListener('touchstart', onClick, false);
+
+  				anchorManager = new THREE.ARAnchorManager(vrDisplay);
 
 				// Kick off the render loop!
 				update();
@@ -95,16 +113,19 @@
 				// the near or far planes have updated
 				camera.updateProjectionMatrix();
 
+				// From the WebVR API, populate `vrFrameData` with
+  				// updated information for the frame
+  				vrDisplay.getFrameData(vrFrameData);
+
 				// Update our perspective camera's positioning
 				vrControls.update();
 
 				// If we have not added boxes yet, and we have positional
 				// information applied to our camera (it can take a few seconds),
 				// and the camera's Y position is not undefined or 0, create boxes
-
-				if (!objectsAdded && !camera.position.y) {
-					addObjects();
-				}
+				// if (!objectsAdded && !camera.position.y) {
+				// 	addObjects();
+				// }
 
 				// Render our three.js virtual scene
 				renderer.clearDepth();
@@ -125,6 +146,58 @@
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+
+			/**
+			 * When clicking on the screen, create a cube at the user's
+			 * current position.
+			 */
+			function onClick(e) {
+				// If the user touched with 2 or more fingers, remove the latest model and
+				// its anchor.
+				if (cones.length > 0 && e.touches.length > 1) {
+					anchorManager.remove(cones[0]);
+					scene.remove(cones[0]);
+					cones.splice(0, 1);
+					return;
+				}
+
+				// Fetch the pose data from the current frame
+				var pose = vrFrameData.pose;
+
+				// Convert the pose orientation and position into
+				// THREE.Quaternion and THREE.Vector3 respectively
+				var ori = new THREE.Quaternion(
+					pose.orientation[0],
+					pose.orientation[1],
+					pose.orientation[2],
+					pose.orientation[3]
+				);
+
+				var pos = new THREE.Vector3(
+					pose.position[0],
+					pose.position[1],
+					pose.position[2]
+				);
+
+				var dirMtx = new THREE.Matrix4();
+				dirMtx.makeRotationFromQuaternion(ori);
+
+				var push = new THREE.Vector3(0, 0, -1.0);
+				push.transformDirection(dirMtx);
+				pos.addScaledVector(push, 0.125);
+
+				// Clone our cube object and place it at the camera's
+				// current position
+				var coneClone = cone.clone();
+				scene.add(coneClone);
+				coneClone.position.copy(pos);
+				coneClone.quaternion.copy(ori);
+
+				cones.push(coneClone);
+
+				anchorManager.add(coneClone);
+
 			}
 
 			/**
