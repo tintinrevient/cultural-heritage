@@ -7,7 +7,7 @@
 ## To-Do List
 
 - [x] Wireframe in the scene based on WebARonARKit
-- [ ] 360-degree with wireframe
+- [x] 360-degree with wireframe
 - [ ] Clickable link
 - [ ] Text 
 - [ ] Image
