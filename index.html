@@ -1,101 +1,199 @@
 <html>
-<head>
-	<title>objmtl</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="index.css">
-	<link href="https://fonts.googleapis.com/css?family=Roboto|Sansita:700&display=swap" rel="stylesheet">
-</head>
-<body>
-	<script type="module">
+	<head>
+		<title>wireframe</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="index.css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto|Sansita:700&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<script src="lib/three.js"></script>
+		<script src="lib/VRControls.js"></script>
+		<script src="lib/three.ar.js"></script>
+		<script>
+			var vrDisplay, vrControls, arView;
 
-		import * as THREE from './lib/three.module.js';
-		import { DDSLoader } from './lib/DDSLoader.js';
-		import { MTLLoader } from './lib/MTLLoader.js';
-		import { OBJLoader } from './lib/OBJLoader.js';
+			var OBJECT_DISTANCE = 5;
+			var objectsAdded = false;
 
-		var renderer, scene, camera;
-		var stats;
-
-		var mouseX = 0, mouseY = 0;
-		var windowHalfX = window.innerWidth / 2;
-		var windowHalfY = window.innerHeight / 2;
-
-		init();
-		animate();
-
-		function init() {
-			scene = new THREE.Scene();
-
-			camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-			camera.position.z = 250;
-
-			var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
-			scene.add(ambientLight);
-
-			var pointLight = new THREE.PointLight(0xffffff, 0.8);
-			camera.add(pointLight);
-			scene.add(camera);
-
-			var onProgress = function(xhr) {
-
-				if(xhr.lengthComputable) {
-					var percentComplete = xhr.loaded / xhr.total * 100;
-					console.log(Math.round(percentComplete, 2) + '% downloaded');
+			/**
+			 * Use the `getARDisplay()` utility to leverage the WebVR API
+			 * to see if there are any AR-capable WebVR VRDisplays. Returns
+			 * a valid display if found. Otherwise, display the unsupported
+			 * browser message.
+			 */
+			THREE.ARUtils.getARDisplay().then(function (display) {
+				if (display) {
+					vrDisplay = display;
+					init();
+				} else {
+					THREE.ARUtils.displayUnsupportedMessage();
 				}
+			});
+
+			function init() {
+				
+				// Turn on the debugging panel
+  				var arDebug = new THREE.ARDebug(vrDisplay);
+  				document.body.appendChild(arDebug.getElement());
+
+				// Setup the three.js rendering environment
+				renderer = new THREE.WebGLRenderer({
+					alpha: true
+				});
+				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.autoClear = false;
+				canvas = renderer.domElement;
+				document.body.appendChild(canvas);
+				scene = new THREE.Scene();
+
+				// Creating the ARView, which is the object that handles
+				// the rendering of the camera stream behind the three.js
+				// scene
+				arView = new THREE.ARView(vrDisplay, renderer);
+
+				// The ARPerspectiveCamera is very similar to THREE.PerspectiveCamera,
+				// except when using an AR-capable browser, the camera uses
+				// the projection matrix provided from the device, so that the
+				// perspective camera's depth planes and field of view matches
+				// the physical camera on the device.
+				camera = new THREE.ARPerspectiveCamera(
+					vrDisplay,
+					60,
+					window.innerWidth / window.innerHeight,
+					vrDisplay.depthNear,
+					vrDisplay.depthFar
+				);
+
+				// VRControls is a utility from three.js that applies the device's
+				// orientation/position to the perspective camera, keeping our
+				// real world and virtual world in sync.
+				vrControls = new THREE.VRControls(camera);
+
+				// Bind our event handlers
+				window.addEventListener('resize', onWindowResize, false);
+				// sphere.rotation.y += 0.005;
+
+				// Kick off the render loop!
+				update();
 			}
 
-			var onError = function() {};
+			/**
+			 * The render loop, called once per frame. Handles updating
+			 * our scene and rendering.
+			 */
+			function update() {
+				// Clears color from the frame before rendering the camera (arView) or scene.
+				renderer.clearColor();
 
-			var manager = new THREE.LoadingManager();
-			manager.addHandler( /\.dds$/i, new DDSLoader());
+				// Render the device's camera stream on screen first of all.
+				// It allows to get the right pose synchronized with the right frame.
+				arView.render();
 
-			new MTLLoader(manager).setPath('../models/obj/male02/').load('male02_dds.mtl', function(materials) {
+				// Update our camera projection matrix in the event that
+				// the near or far planes have updated
+				camera.updateProjectionMatrix();
 
-				materials.preload();
+				// Update our perspective camera's positioning
+				vrControls.update();
 
-				new OBJLoader(manager).setMaterials(materials).setPath('../models/obj/male02/').load('male02.obj', function(object) {
-					object.position.y = - 95;
-					scene.add(object);
-				}, onProgress, onError);
+				// If we have not added boxes yet, and we have positional
+				// information applied to our camera (it can take a few seconds),
+				// and the camera's Y position is not undefined or 0, create boxes
 
-			});
-			
+				if (!objectsAdded && !camera.position.y) {
+					addObjects();
+				}
 
-			renderer = new THREE.WebGLRenderer();
-			renderer.setPixelRatio(window.devicePixelRatio);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
+				// Render our three.js virtual scene
+				renderer.clearDepth();
 
-			document.addEventListener('mousemove', onDocumentMouseMove, false);
+				renderer.render(scene, camera);
 
-		}
+				// Kick off the requestAnimationFrame to call this function
+				// when a new VRDisplay frame is rendered
+				vrDisplay.requestAnimationFrame(update);
+			}
 
-		function onDocumentMouseMove(event) {
+			/**
+			 * On window resize, update the perspective camera's aspect ratio,
+			 * and call `updateProjectionMatrix` so that we can get the latest
+			 * projection matrix provided from the device
+			 */
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
 
-			mouseX = (event.clientX - windowHalfX) / 2;
-			mouseY = (event.clientY - windowHalfY) / 2;
+			/**
+			 * Once we have position information applied to our camera,
+			 * create some boxes at the same height as the camera
+			 */
 
-		}
+			function addObjects() {
 
-		function animate() {
+				var quantity = 6
 
-			requestAnimationFrame(animate);
+				var angle = Math.PI * 2 * (1 / quantity);
+				var geometry = new THREE.TorusGeometry(1, 0.4, 16, 60);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var torus = new THREE.Mesh(geometry, material);
+				torus.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 0.75, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(torus);
 
-			render();
+				var angle = Math.PI * 2 * (2 / quantity);
+				var geometry = new THREE.CubeGeometry(2, 2, 2);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var cube = new THREE.Mesh(geometry, material);
+				cube.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y + 0.25, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(cube);
 
-		}
+				var angle = Math.PI * 2 * (3 / quantity);
+				var geometry = new THREE.CylinderGeometry(1, 1, 3, 8);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var cylinder = new THREE.Mesh(geometry, material);
+				cylinder.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 2, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(cylinder);
 
-		function render() {
+				var angle = Math.PI * 2 * (4 / quantity);
+				var geometry = new THREE.ConeGeometry(1, 3, 16);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var cone = new THREE.Mesh(geometry, material);
+				cone.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 1.5, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(cone);
 
-			camera.position.x += (mouseX - camera.position.x) * .05;
-			camera.position.y += (- mouseY - camera.position.y) * .05;
+				var angle = Math.PI * 2 * (5 / quantity);
+				var geometry = new THREE.SphereGeometry(1, 16, 16);
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var sphere = new THREE.Mesh(geometry, material);
+				sphere.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y - 0.75, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(sphere);
 
-			camera.lookAt(scene.position);
+				var angle = Math.PI * 2 * (6 / quantity);
+				var geometry = new THREE.DodecahedronGeometry(2, 1)
+				var material = new THREE.MeshBasicMaterial({
+					wireframe: true
+				});
+				var dodecahedron = new THREE.Mesh(geometry, material);
+				dodecahedron.position.set(Math.cos(angle) * OBJECT_DISTANCE, camera.position.y + 1, Math.sin(angle) * OBJECT_DISTANCE);
+				scene.add(dodecahedron);
 
-			renderer.render(scene, camera);
-		}
 
-	</script>
-</body>
+				// Flip this switch so that we only perform this once
+				objectsAdded = true;
+			}
+		</script>
+	</body>
 </html>

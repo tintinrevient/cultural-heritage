@@ -6,7 +6,13 @@
 
 ## To-Do List
 
-- [ ] Avatar put into camera.
+- [x] Wireframe in the scene based on WebARonARKit
+- [ ] 360-degree with wireframe
+- [ ] Clickable link
+- [ ] Text 
+- [ ] Image
+- [ ] Video
+- [ ] Sound
 
 ##  Vision
 
@@ -18,3 +24,6 @@
 * https://cris.brighton.ac.uk/ws/portalfiles/portal/7253800/placebased_lowres.pdf
 * http://www.sbs.com.au/theboat/
 * http://www.ro.me/
+* https://github.com/google-ar/WebARonARKit
+* https://github.com/google-ar/three.ar.js
+* https://github.com/mrdoob/three.js
