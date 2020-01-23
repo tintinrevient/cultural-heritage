@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>statue</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/png" href="../static/fish.ico" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="lib/aframe.min.js"></script>
+    <script src="lib/aframe-ar.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene embedded arjs="debugUIEnabled: false; sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+      <a-assets>
+        <video id="verzetsmonument" playsinline src="../static/verzetsmonument.ogv">
+        </video>
+        <img id="my-image" src="../static/Giovanni_Paolo_Pannini.jpg">
+      </a-assets>
+      
+      <a-marker type="barcode" value="1" id="marker-1">
+        <a-entity scale="6 6 6" rotation="-90 0 0" position="0 0 0"
+                  geometry="primitive: plane; width: auto; height: auto" material="opacity: 0.5; color: white"
+                  text="font: https://cdn.aframe.io/fonts/Exo2Bold.fnt; 
+                        color: gold; 
+                        value: Jan van Nassau, \n
+                        stadhouder van Gelre en oudste broer van Willem van Oranje."></a-entity>
+      </a-marker>
+      
+      <a-marker type="barcode" value="2" id="marker-2">
+        <a-entity scale="6 6 6" rotation="-90 0 0" position="0 0 0"
+                  geometry="primitive: plane; width: auto; height: auto" material="opacity: 0.5; color: white"
+                  text="font: https://cdn.aframe.io/fonts/Exo2Bold.fnt; 
+                        color: blue; 
+                        value: Heeft zich in het bijzonder ingezet voor de totstandkoming van de Unie van Utrecht, \n
+                        die op 23 januari 1579 in de kapittelzaal van de dom werd gesloten."></a-entity>
+      </a-marker>
+      
+      <a-marker type="barcode" value="3" id="marker-3">
+        <a-entity scale="6 6 6" rotation="-90 0 0" position="0 0 0"
+                  geometry="primitive: plane; width: auto; height: auto" material="opacity: 0.5; color: white"
+                  text="font: https://cdn.aframe.io/fonts/Exo2Bold.fnt; 
+                        color: green; 
+                        value: Deze unie wordt beschouwd als de grondslag van de Republiek der Zeven Verenigde Nederlanden \n
+                        en daarom ook van de huidige Nederlandse staat."></a-entity>
+      </a-marker>
+      
+      <a-marker type="barcode" value="4" id="marker-4">
+        <a-entity scale="2 2 2" rotation="-90 0 0">
+          <a-video play-on-scan src="#verzetsmonument"></a-video>
+        </a-entity>
+      </a-marker>
+      
+      <a-marker type="barcode" value="5" id="marker-5">
+        <a-entity scale="2 2 2" rotation="-90 0 0">
+          <a-image src="#my-image"></a-image>
+        </a-entity>
+      </a-marker>
+      
+      <a-camera-static />
+    </a-scene>
+  </body>
+</html>
