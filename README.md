@@ -6,7 +6,7 @@
 
 ## AR.js 
 
-AR.js is by Jerome Etienne, which provides both an A-Frame and a three.js extension that allows building marker-based AR scenes. AR.js is built with WebGL and WebRTC, based on which it is able to work on almost every browser on every device, e.g., desktops and mobiles, regardless of specific operating systems. This is a pure web-based solution and its architecture is as below:
+AR.js is by [Jerome Etienne](https://github.com/jeromeetienne/AR.js), which provides both an A-Frame and a three.js extension that allows building marker-based AR scenes. AR.js is built with WebGL and WebRTC, based on which it is able to work on almost every browser on every device, e.g., desktops and mobiles, regardless of specific operating systems. This is a pure web-based solution and its architecture is as below:
 
 ![webgl](./pix/webgl.png)
 
@@ -34,3 +34,4 @@ To set up the local running environment:
 * https://github.com/google-ar/WebARonARKit
 * https://github.com/google-ar/three.ar.js
 * https://github.com/mrdoob/three.js
+* https://github.com/jeromeetienne/AR.js
