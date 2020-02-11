@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Artequakt</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond|Roboto&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero__inner">
+        <h1>Artequakt</h1>
+        <h2>Generating Tailored Biographies with Automatically Annotated Fragments from the Web</h2>
+        <div class="arrow bounce">
+          <a href="#main"></a>
+        </div>
+      </div>
+    </section>
+    <main id="main">
+      <div class="top">
+        <ul class="overview">
+          <li class='is--active' onclick="currentMenu(1)">goal</li>
+          <li onclick="currentMenu(2)">system architecture</li>
+          <li onclick="currentMenu(3)">Technical Detail</li>
+          <li onclick="currentMenu(4)">challenge</li>
+          <li onclick="currentMenu(5)">tops & tips</li>
+        </ul>
+      </div>
+      <div class="bottom">
+        <div class="menu">
+          <div class="menu__inner">
+            <span>keywords</span>
+            <div class="menu__item">
+              <ul id="keywords">
+                <li>Knowledge Base</li>
+                <li>Annotation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="slides">
+          <h1>Our aim is to be able to <mark>generate automatically tailored biographies</mark> from a <mark>knowledge base</mark> which has been automatically populated by annotating text fragments extracted from Web documents.</h1>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="menu">
+          <div class="menu__inner">
+            <span>keywords</span>
+            <div class="menu__item">
+              <ul id="keywords">
+                <li>Knowledge Extraction</li>
+                <li>Information Management</li>
+                <li>Biography Construction</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="slides">
+          <div class="slideshow">
+            <div class="slide fade">
+              <img src="./image/system-architecture.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/knowledge-extraction.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/information-management.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/template-pruning.png" />
+            </div>
+          </div>
+          <div class="dots">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="menu">
+          <div class="menu__inner">
+            <span>keywords</span>
+            <div class="menu__item">
+              <ul id="keywords">
+                <li>NER</li>
+                <li>Coreference</li>
+                <li>POS Tagger</li>
+                <li>WordNet</li>
+                <li>Ontology</li>
+                <li>Fabula, Story, Narrative</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="slides">
+          <div class="slideshow">
+            <div class="slide fade">
+              <img src="./image/stanford-corenlp.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/wordnet.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/ontology.png" />
+            </div>
+            <div class="slide fade">
+              <img src="./image/biography-construction.png" style="height: 300px;" />
+            </div>
+          </div>
+          <div class="dots">
+            <span class="dot" onclick="currentSlide(5)"></span>
+            <span class="dot" onclick="currentSlide(6)"></span>
+            <span class="dot" onclick="currentSlide(7)"></span>
+            <span class="dot" onclick="currentSlide(8)"></span>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="menu">
+          <div class="menu__inner">
+            <span>keywords</span>
+            <div class="menu__item">
+              <ul id="keywords">
+                <li>NLP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="slides">
+          <h1>Challenge</h1>
+          <ul>
+            <li><h2>Different expressions and words</h2></li>
+              <ul>
+                <li><h3>Rembrandt was born in the 17th century in Leiden.</h3></li>
+                <li><h3>Rembrandt was born in 1606 in the Netherlands.</h3></li>
+                <li><h3>Rembrandt was born on July 15 1606 in Holland.</h3></li>
+              </ul>
+            <li><h2>Consolidation process for duplicate instances</h2></li>
+            <li><h2>Relation extraction</h2></li>
+            <li><h2>Sophisticated narrative structuring of the knowledge fragment</h2></li>
+          </ul>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="menu">
+          <div class="menu__inner" style="background-image: url('./image/thank-you-for-listening.jpg'); background-size: cover; height: 160px;">
+          </div>
+        </div>
+        <div class="slides">
+          <h1>Tops & Tips</h1>
+          <ul>
+            <li><h2>Expressive diagram</h2></li>
+            <li><h2>Well structured</h2></li>
+            <li><h2>Short and clear description</h2></li>
+            <li><h2>No evaluation</h2></li>
+            <li><h2>No end-to-end result analysis</h2></li>
+            <li><h2>Lack of detail for the crutial technical implementation</h2></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script  src="./script.js"></script>
+  </body>
+</html>
