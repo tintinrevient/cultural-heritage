@@ -12,6 +12,8 @@ AR.js is by [Jerome Etienne](https://github.com/jeromeetienne/AR.js), which prov
 
 The source code is in this [link](./ar-js/)
 
+The demo is in this [link](https://prickle-vision.glitch.me/)
+
 To set up the local runnning environment, a local HTTPS server is required.
 
 ## Three.ar.js
