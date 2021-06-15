@@ -37,3 +37,7 @@ To set up the local running environment:
 * https://github.com/google-ar/three.ar.js
 * https://github.com/mrdoob/three.js
 * https://github.com/jeromeetienne/AR.js
+
+## Slides
+
+https://brave-yonath-13b7d2.netlify.app/
