@@ -1,5 +1,9 @@
 # Cultural Heritage
 
+## Slides
+
+https://brave-yonath-13b7d2.netlify.app/
+
 ## Motivation
 
 **Reality** mixed with **Concepts** from mind which are represented as words, images and videos.
@@ -37,7 +41,3 @@ To set up the local running environment:
 * https://github.com/google-ar/three.ar.js
 * https://github.com/mrdoob/three.js
 * https://github.com/jeromeetienne/AR.js
-
-## Slides
-
-https://brave-yonath-13b7d2.netlify.app/
